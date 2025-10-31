@@ -1,6 +1,6 @@
 //store all the information about the assignment between patient and bed
 import 'package:hms_project/domian/patient.dart';
-import 'package:hms_project/domian/Room.dart';
+import 'package:hms_project/domian/room.dart';
 
 class Bedassignment {
   Patient patient;

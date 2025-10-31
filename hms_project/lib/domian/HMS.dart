@@ -1,7 +1,7 @@
 //contain all the operate of the bed allocation in the hospital;
-import 'package:hms_project/domian/BedAssignment.dart';
+import 'package:hms_project/domian/bedAssignment.dart';
 import 'package:hms_project/domian/patient.dart';
-import 'package:hms_project/domian/Room.dart';
+import 'package:hms_project/domian/room.dart';
 
 class HMS {
     final String hospitalName;
