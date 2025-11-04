@@ -1,0 +1,20 @@
+{
+  "patients": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ef",
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "gender": "female",
+      "contact": "+85512345678",
+      "createdAt": "2025-11-02T09:30:00.000"
+    },
+    {
+      "id": "f0e9d8c7-b6a5-4321-fedc-0987654321ba",
+      "firstName": "Bob",
+      "lastName": "Chan",
+      "gender": "male",
+      "contact": "+85598765432",
+      "createdAt": "2025-11-01T14:45:00.000"
+    }
+  ]
+}

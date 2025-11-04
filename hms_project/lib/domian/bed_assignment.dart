@@ -8,7 +8,8 @@ class Bedassignment {
   DateTime startDate;
   DateTime? endDate; //store when patient checkout
 
-  Bedassignment({required this.patient, required this.bed}) : startDate = DateTime.now();
+  Bedassignment({required this.patient, required this.bed})
+    : startDate = DateTime.now();
 
   //check if the bed assignment is still active
   bool isActive() => endDate == null;

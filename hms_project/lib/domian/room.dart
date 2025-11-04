@@ -1,14 +1,14 @@
 //enum for different room type
-enum roomType { VIP, PRIVATE, GENERAL, ICU }
+enum RoomType { vip, private, general, icu }
 
-enum bedStatus { BUSY, FREE }
+enum BedStatus { busy, free }
 
 //class for each bed
 class Bed {
   final String bedNumber;
-  bedStatus status;
+  BedStatus status;
   final Room room;
-  Bed({required this.bedNumber, this.status = bedStatus.FREE, required this.room});
+  Bed({required this.bedNumber, this.status = BedStatus.free, required this.room});
 
   //toString method for bed
   @override
@@ -20,23 +20,23 @@ class Bed {
   }
 
   //function to check if the bed is free
-  bool ifBedFree() => status == bedStatus.FREE;
+  bool ifBedFree() => status == BedStatus.free;
 
   //free the bed
-  void freeBed() => status = bedStatus.FREE;
+  void freeBed() => status = BedStatus.free;
 }
 
 class Room {
   final String roomNumber;
   final int capacity;
   final List<Bed> beds = [];
-  final roomType type;
+  final RoomType type;
 
   //default room set to general room
-  Room({required this.roomNumber, required this.capacity}) : type = roomType.GENERAL;
-  Room.private({required this.roomNumber}) : capacity = 1, type = roomType.PRIVATE;
-  Room.icu({required this.roomNumber}) : capacity = 1, type = roomType.ICU;
-  Room.vip({required this.roomNumber}) : capacity = 1, type = roomType.VIP;
+  Room({required this.roomNumber, required this.capacity}) : type = RoomType.general;
+  Room.private({required this.roomNumber}) : capacity = 1, type = RoomType.private;
+  Room.icu({required this.roomNumber}) : capacity = 1, type = RoomType.icu;
+  Room.vip({required this.roomNumber}) : capacity = 1, type = RoomType.vip;
 
   //function to add bed
   void addBed(Bed bed) {
