@@ -48,7 +48,7 @@ class Patient {
     return '''
     Id: $id
     Full name: $fullName
-    Gender: $gender
+    Gender: ${gender.name}
     Contact: $contact
     ''';
   }
