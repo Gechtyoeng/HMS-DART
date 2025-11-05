@@ -37,6 +37,14 @@ class HMS {
       print('Invalid contact number. Please enter digits only.');
       return;
     }
+    
+    //check if contact existed
+    bool contactExisted = patients.any((p) => p.contact == contact);
+    if (contactExisted) {
+      print('Contact number: $contact is already registered.');
+      return;
+    }
+
     Gender? gender;
     if (genderInput.toLowerCase() == 'male') {
       gender = Gender.male;
@@ -54,7 +62,7 @@ class HMS {
   }
 
   Patient? searchPatientByContact(String contact) {
-    contact = contact.trim().replaceAll(' ', '');//remove space before compare
+    contact = contact.trim().replaceAll(' ', ''); //remove space before compare
     try {
       return patients.firstWhere((p) => p.contact == contact);
     } catch (e) {
