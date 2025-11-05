@@ -1,15 +1,22 @@
 import 'dart:io';
 import '../domian/hms.dart';
-// import '../data/patientRepository.dart';
+import '../data/hms_repository.dart';
 import '../domian/room.dart';
 import '../domian/patient.dart';
-import '../data/mockup_data.dart';
+// import '../data/mockup_data.dart';
 
 class RoomAllocation {
-  HMS hms = HMS(hospitalName: "CADT", location: "Prek Leab", contact: "012345678");
+  // HMS hms = HMS(
+  //   hospitalName: "CADT",
+  //   location: "Prek Leab",
+  //   contact: "012345678",
+  // );
+  HMS hms;
+
+  RoomAllocation(this.hms);
 
   void startRoomAllocation() {
-    initializeMockData(hms);
+    // initializeMockData(hms);
     bool running = true;
     while (running) {
       showMenu();
@@ -36,7 +43,12 @@ class RoomAllocation {
           stdout.write('Enter Contact Number: ');
           String contact = stdin.readLineSync() ?? '';
 
-          hms.registerPatient(firstName: firstName, lastName: lastName, genderInput: genderInput, contact: contact);
+          hms.registerPatient(
+            firstName: firstName,
+            lastName: lastName,
+            genderInput: genderInput,
+            contact: contact,
+          );
           break;
         case '3':
           roomAllocationMenu();
@@ -74,6 +86,7 @@ class RoomAllocation {
           }
           break;
         case '6':
+          saveToJson(hms);
           running = false;
           print('\nThank you for using Hospital Room Manager. Stay healthy!');
           break;
@@ -92,7 +105,7 @@ class RoomAllocation {
       print('2. View Available Rooms');
       print('3. Assign Room to Patient');
       print('4. Change Room');
-      print('5 Back to Menu');
+      print('5. Back to Menu');
       stdout.write('Select an option: ');
       String? subChoice = stdin.readLineSync();
 
@@ -186,7 +199,7 @@ class RoomAllocation {
         print('Room Type: ${room.type.name}');
         print('Available Beds:');
         for (var bed in beds) {
-          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]');
+          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]\n');
         }
       });
     }
@@ -218,7 +231,7 @@ class RoomAllocation {
       final room = roomList[i];
       print('${i + 1}. Room ${room.roomNumber} (${room.type.name})');
       for (var bed in available[room]!) {
-        print('   - Bed ${bed.bedNumber} [${bed.status.name}]');
+        print('   - Bed ${bed.bedNumber} [${bed.status.name}]\n');
       }
     }
 

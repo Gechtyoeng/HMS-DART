@@ -4,9 +4,17 @@ import 'patient_repository.dart';
 import 'bed_assigment.dart';
 
 void loadFromJson(HMS hms) {
-  final patients = loadPatients('assets/patients.json');
-  final rooms = loadRooms('assets/rooms.json');
-  final assignments = loadAssignments('assets/assignments.json', patients, rooms);
+  final patients = loadPatients(
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\patientsList.json',
+  );
+  final rooms = loadRooms(
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\roomList.json',
+  );
+  final assignments = loadAssignments(
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\assignment.json',
+    patients,
+    rooms,
+  );
 
   hms.patients.addAll(patients);
   hms.rooms.addAll(rooms);
@@ -14,7 +22,16 @@ void loadFromJson(HMS hms) {
 }
 
 void saveToJson(HMS hms) {
-  savePatients(hms.patients, 'assets/patients.json');
-  saveRooms(hms.rooms, 'assets/rooms.json');
-  saveAssignments(hms.bedAllocations, 'assets/assignments.json');
+  savePatients(
+    hms.patients,
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\patientsList.json',
+  );
+  saveRooms(
+    hms.rooms,
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\roomList.json',
+  );
+  saveAssignments(
+    hms.bedAllocations,
+    'D:\\Y3\\Develop\\Molibe\\HMS-DART\\hms_project\\lib\\data\\assignment.json',
+  );
 }

@@ -8,7 +8,7 @@ class Bedassignment {
   DateTime startDate;
   DateTime? endDate; //store when patient checkout
 
-  Bedassignment({required this.patient, required this.bed})
+  Bedassignment({required this.patient, required this.bed, DateTime? endDate})
     : startDate = DateTime.now();
 
   //check if the bed assignment is still active
@@ -38,6 +38,14 @@ class Bedassignment {
     print(endDate != null ? 'End date: $endDate' : 'Status : Active');
   }
 
+  Map<String, Object?> toJson() => {
+    'patientId': patient.id,
+    'bedNumber': bed.bedNumber,
+    'roomNumber': bed.room.roomNumber,
+    'startDate': startDate.toIso8601String(),
+    'endDate': endDate?.toIso8601String(),
+  };
+
   static Bedassignment fromJson(
     Map<String, Object?> json,
     Map<String, Patient> patientMap,
@@ -55,13 +63,12 @@ class Bedassignment {
 
     final bed = room.beds.firstWhere((b) => b.bedNumber == bedNumber);
 
-    return Bedassignment(
-      patient: patient,
-      bed: bed,
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: json['endDate'] != null
-          ? DateTime.parse(json['endDate'] as String)
-          : null,
-    );
+    final assignment = Bedassignment(patient: patient, bed: bed);
+    assignment.startDate = DateTime.parse(json['startDate'] as String);
+    assignment.endDate = json['endDate'] != null
+        ? DateTime.parse(json['endDate'] as String)
+        : null;
+
+    return assignment;
   }
 }

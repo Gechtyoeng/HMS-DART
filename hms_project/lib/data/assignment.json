@@ -1,16 +1,1 @@
-[
-  {
-    "patientId": "uuid-alice",
-    "bedNumber": "G1",
-    "roomNumber": "G101",
-    "assignedAt": "2025-11-05T11:00:00",
-    "checkoutTime": null
-  },
-  {
-    "patientId": "uuid-bob",
-    "bedNumber": "V1",
-    "roomNumber": "V301",
-    "assignedAt": "2025-11-05T11:00:00",
-    "checkoutTime": null
-  }
-]
+[{"patientId":"uuid-alice","bedNumber":"G1","roomNumber":"G101","startDate":"2025-11-05T12:19:30.026080","endDate":null},{"patientId":"uuid-bob","bedNumber":"V1","roomNumber":"V301","startDate":"2025-11-05T12:19:30.026080","endDate":null},{"patientId":"57aa990f-7873-4445-882f-0ef54133afce","bedNumber":"G2","roomNumber":"G101","startDate":"2025-11-05T12:19:30.026080","endDate":null},{"patientId":"57aa990f-7873-4445-882f-0ef54133afce","bedNumber":"I1","roomNumber":"I401","startDate":"2025-11-05T12:19:30.026080","endDate":null}]
