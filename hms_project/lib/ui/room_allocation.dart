@@ -1,15 +1,22 @@
 import 'dart:io';
 import '../domian/hms.dart';
-// import '../data/patientRepository.dart';
+import '../data/hms_repository.dart';
 import '../domian/room.dart';
 import '../domian/patient.dart';
-import '../data/mockup_data.dart';
+// import '../data/mockup_data.dart';
 
 class RoomAllocation {
-  HMS hms = HMS(hospitalName: "CADT", location: "Prek Leab", contact: "012345678");
+  // HMS hms = HMS(
+  //   hospitalName: "CADT",
+  //   location: "Prek Leab",
+  //   contact: "012345678",
+  // );
+  HMS hms;
+
+  RoomAllocation(this.hms);
 
   void startRoomAllocation() {
-    initializeMockData(hms);
+    // initializeMockData(hms);
     bool running = true;
     while (running) {
       showMenu();
@@ -42,6 +49,11 @@ class RoomAllocation {
           roomAllocationMenu();
           break;
         case '4':
+          print('\nAll assignment detail \n');
+          for (var ba in hms.bedAllocations) {
+            ba.assignmentDetail();
+          }
+        case '5':
           print('\nPatient Checkout\n');
           stdout.write('Enter patient contact: ');
           String contact = stdin.readLineSync() ?? '';
@@ -54,7 +66,7 @@ class RoomAllocation {
 
           hms.checkoutPatient(patient);
           break;
-        case '5':
+        case '6':
           print('\nSearch Patient by Contact\n');
           stdout.write('Enter contact number: ');
           String contact = stdin.readLineSync() ?? '';
@@ -73,7 +85,8 @@ class RoomAllocation {
             print(patient);
           }
           break;
-        case '6':
+        case '7':
+          saveToJson(hms);
           running = false;
           print('\nThank you for using Hospital Room Manager. Stay healthy!');
           break;
@@ -92,7 +105,7 @@ class RoomAllocation {
       print('2. View Available Rooms');
       print('3. Assign Room to Patient');
       print('4. Change Room');
-      print('5 Back to Menu');
+      print('5. Back to Menu');
       stdout.write('Select an option: ');
       String? subChoice = stdin.readLineSync();
 
@@ -186,7 +199,7 @@ class RoomAllocation {
         print('Room Type: ${room.type.name}');
         print('Available Beds:');
         for (var bed in beds) {
-          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]');
+          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]\n');
         }
       });
     }
@@ -218,7 +231,7 @@ class RoomAllocation {
       final room = roomList[i];
       print('${i + 1}. Room ${room.roomNumber} (${room.type.name})');
       for (var bed in available[room]!) {
-        print('   - Bed ${bed.bedNumber} [${bed.status.name}]');
+        print('   - Bed ${bed.bedNumber} [${bed.status.name}]\n');
       }
     }
 
@@ -256,8 +269,9 @@ void showMenu() {
   print('1. Show All Patients');
   print('2. Register Patient');
   print('3. Room Allocation');
-  print('4. Patient Checkout');
-  print('5. Search Patient by Contact');
-  print('6. Exit');
+  print('4. View all bed assignment');
+  print('5. Patient Checkout');
+  print('6. Search Patient by Contact');
+  print('7. Exit');
   print('------------------------------------');
 }

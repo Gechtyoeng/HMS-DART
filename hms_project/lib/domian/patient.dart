@@ -4,8 +4,7 @@ import 'package:uuid/uuid.dart';
 enum Gender { male, female }
 
 class Patient {
-  final String _id = const Uuid()
-      .v4(); //set uuid for pricvate fied (ai generated)
+  late final String _id;
   final String _firstName;
   final String _lastName;
   final Gender _gender;
@@ -21,7 +20,8 @@ class Patient {
        _lastName = lastName,
        _gender = gender,
        _contact = contact,
-       createdAt = DateTime.now();
+       createdAt = DateTime.now(),
+       _id = const Uuid().v4();
 
   // Private named constructor for deserialization
   //AI Generated
@@ -32,10 +32,12 @@ class Patient {
     required Gender gender,
     required String contact,
     required this.createdAt,
-  }) : _firstName = firstName,
+  }) : _id = id,
+       _firstName = firstName,
        _lastName = lastName,
        _gender = gender,
        _contact = contact;
+
   //getter for patient
   String get id => _id;
   String get fullName => '$_firstName $_lastName';
@@ -53,8 +55,7 @@ class Patient {
     ''';
   }
 
-  // Convert patient to JSON
-  Map<String, String> toJson() => {
+  Map<String, Object?> toJson() => {
     'id': id,
     'firstName': _firstName,
     'lastName': _lastName,
@@ -63,12 +64,12 @@ class Patient {
     'createdAt': createdAt.toIso8601String(),
   };
 
-  factory Patient.fromJson(Map<String, String> json) => Patient._fromJson(
-    id: json['id']!,
-    firstName: json['firstName']!,
-    lastName: json['lastName']!,
+  factory Patient.fromJson(Map<String, Object?> json) => Patient._fromJson(
+    id: json['id'] as String,
+    firstName: json['firstName'] as String,
+    lastName: json['lastName'] as String,
     gender: Gender.values.firstWhere((g) => g.name == json['gender']),
-    contact: json['contact']!,
-    createdAt: DateTime.parse(json['createdAt']!),
+    contact: json['contact'] as String,
+    createdAt: DateTime.parse(json['createdAt'] as String),
   );
 }

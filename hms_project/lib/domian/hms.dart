@@ -100,6 +100,14 @@ class HMS {
       print('Bed ${bed.bedNumber} is already occupied.');
       return;
     }
+    
+    //check if patient already assigned
+    for (var assignment in bedAllocations) {
+      if (assignment.patient == patient) {
+        print('Patient already have bed assignment.');
+        return;
+      }
+    }
 
     bed.assignBed();
     final assignment = Bedassignment(patient: patient, bed: bed);

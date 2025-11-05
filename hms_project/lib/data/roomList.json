@@ -1,0 +1,65 @@
+[
+  {
+    "roomNumber": "G101",
+    "capacity": 4,
+    "type": "general",
+    "beds": [
+      {
+        "bedNumber": "G1",
+        "status": "busy",
+        "roomNumber": "G101"
+      },
+      {
+        "bedNumber": "G2",
+        "status": "free",
+        "roomNumber": "G101"
+      },
+      {
+        "bedNumber": "G3",
+        "status": "free",
+        "roomNumber": "G101"
+      },
+      {
+        "bedNumber": "G4",
+        "status": "free",
+        "roomNumber": "G101"
+      }
+    ]
+  },
+  {
+    "roomNumber": "P201",
+    "capacity": 1,
+    "type": "private",
+    "beds": [
+      {
+        "bedNumber": "P1",
+        "status": "free",
+        "roomNumber": "P201"
+      }
+    ]
+  },
+  {
+    "roomNumber": "V301",
+    "capacity": 1,
+    "type": "vip",
+    "beds": [
+      {
+        "bedNumber": "V1",
+        "status": "busy",
+        "roomNumber": "V301"
+      }
+    ]
+  },
+  {
+    "roomNumber": "I401",
+    "capacity": 1,
+    "type": "icu",
+    "beds": [
+      {
+        "bedNumber": "I1",
+        "status": "busy",
+        "roomNumber": "I401"
+      }
+    ]
+  }
+]
