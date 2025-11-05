@@ -37,7 +37,7 @@ class HMS {
       print('Invalid contact number. Please enter digits only.');
       return;
     }
-    
+
     //check if contact existed
     bool contactExisted = patients.any((p) => p.contact == contact);
     if (contactExisted) {
@@ -101,7 +101,7 @@ class HMS {
       return;
     }
 
-    bed.status = BedStatus.busy;
+    bed.assignBed();
     final assignment = Bedassignment(patient: patient, bed: bed);
     bedAllocations.add(assignment);
 

@@ -24,6 +24,9 @@ class Bed {
 
   //free the bed
   void freeBed() => status = BedStatus.free;
+
+  //assign bed
+  void assignBed() => status = BedStatus.busy;
 }
 
 class Room {
