@@ -1,0 +1,16 @@
+[
+  {
+    "patientId": "uuid-alice",
+    "bedNumber": "G1",
+    "roomNumber": "G101",
+    "assignedAt": "2025-11-05T11:00:00",
+    "checkoutTime": null
+  },
+  {
+    "patientId": "uuid-bob",
+    "bedNumber": "V1",
+    "roomNumber": "V301",
+    "assignedAt": "2025-11-05T11:00:00",
+    "checkoutTime": null
+  }
+]

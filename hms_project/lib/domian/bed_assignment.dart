@@ -37,4 +37,31 @@ class Bedassignment {
     print('Start date: $startDate');
     print(endDate != null ? 'End date: $endDate' : 'Status : Active');
   }
+
+  static Bedassignment fromJson(
+    Map<String, Object?> json,
+    Map<String, Patient> patientMap,
+    Map<String, Room> roomMap,
+  ) {
+    final patientId = json['patientId'] as String;
+    final roomNumber = json['roomNumber'] as String;
+    final bedNumber = json['bedNumber'] as String;
+
+    final patient = patientMap[patientId];
+    final room = roomMap[roomNumber];
+    if (patient == null || room == null) {
+      throw Exception('Missing patient or room for assignment');
+    }
+
+    final bed = room.beds.firstWhere((b) => b.bedNumber == bedNumber);
+
+    return Bedassignment(
+      patient: patient,
+      bed: bed,
+      startDate: DateTime.parse(json['startDate'] as String),
+      endDate: json['endDate'] != null
+          ? DateTime.parse(json['endDate'] as String)
+          : null,
+    );
+  }
 }
