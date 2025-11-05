@@ -11,11 +11,7 @@ class HMS {
   final List<Room> rooms = [];
   final List<Bedassignment> bedAllocations = [];
 
-  HMS({
-    required this.hospitalName,
-    required this.location,
-    required this.contact,
-  });
+  HMS({required this.hospitalName, required this.location, required this.contact});
 
   // Function that display all patients
   void showAllPatients() {
@@ -29,20 +25,18 @@ class HMS {
   }
 
   // Function register new patient
-  void registerPatient({
-    required String firstName,
-    required String lastName,
-    required String genderInput,
-    required String contact,
-  }) {
-    if (firstName.isEmpty ||
-        lastName.isEmpty ||
-        genderInput.isEmpty ||
-        contact.isEmpty) {
+  void registerPatient({required String firstName, required String lastName, required String genderInput, required String contact}) {
+    if (firstName.isEmpty || lastName.isEmpty || genderInput.isEmpty || contact.isEmpty) {
       print('Invalid input. All fields are required.');
       return;
     }
-
+    //clean the contact
+    contact = contact.trim().replaceAll(' ', '');
+    // Contact validation
+    if (!RegExp(r'^[0-9]+$').hasMatch(contact)) {
+      print('Invalid contact number. Please enter digits only.');
+      return;
+    }
     Gender? gender;
     if (genderInput.toLowerCase() == 'male') {
       gender = Gender.male;
@@ -53,18 +47,14 @@ class HMS {
       return;
     }
 
-    final newPatient = Patient(
-      firstName: firstName,
-      lastName: lastName,
-      gender: gender,
-      contact: contact,
-    );
+    final newPatient = Patient(firstName: firstName, lastName: lastName, gender: gender, contact: contact);
 
     patients.add(newPatient);
     print("Patient ${newPatient.fullName} registered successfully.");
   }
 
   Patient? searchPatientByContact(String contact) {
+    contact = contact.trim().replaceAll(' ', '');//remove space before compare
     try {
       return patients.firstWhere((p) => p.contact == contact);
     } catch (e) {
@@ -76,8 +66,7 @@ class HMS {
   Map<Room, List<Bed>> getOccupiedRooms() {
     return {
       for (var room in rooms)
-        if (room.beds.any((b) => b.status == BedStatus.busy))
-          room: room.beds.where((b) => b.status == BedStatus.busy).toList(),
+        if (room.beds.any((b) => b.status == BedStatus.busy)) room: room.beds.where((b) => b.status == BedStatus.busy).toList(),
     };
   }
 
@@ -85,8 +74,7 @@ class HMS {
   Map<Room, List<Bed>> getAvailableRooms() {
     return {
       for (var room in rooms)
-        if (room.beds.any((b) => b.status == BedStatus.free))
-          room: room.beds.where((b) => b.status == BedStatus.free).toList(),
+        if (room.beds.any((b) => b.status == BedStatus.free)) room: room.beds.where((b) => b.status == BedStatus.free).toList(),
     };
   }
 
@@ -94,8 +82,7 @@ class HMS {
   Map<Room, List<Bed>> getAvailableBedsByRoomType(RoomType type) {
     return {
       for (var room in rooms.where((r) => r.type == type))
-        if (room.beds.any((b) => b.ifBedFree()))
-          room: room.beds.where((b) => b.ifBedFree()).toList(),
+        if (room.beds.any((b) => b.ifBedFree())) room: room.beds.where((b) => b.ifBedFree()).toList(),
     };
   }
 
@@ -110,9 +97,7 @@ class HMS {
     final assignment = Bedassignment(patient: patient, bed: bed);
     bedAllocations.add(assignment);
 
-    print(
-      'Assigned Bed ${bed.bedNumber} in Room ${bed.room.roomNumber} to ${patient.fullName}.',
-    );
+    print('Assigned Bed ${bed.bedNumber} in Room ${bed.room.roomNumber} to ${patient.fullName}.');
   }
 
   //Function checkout for patient
@@ -120,18 +105,14 @@ class HMS {
     Bedassignment? assignment;
 
     try {
-      assignment = bedAllocations.firstWhere(
-        (a) => a.patient.id == patient.id && a.isActive(),
-      );
+      assignment = bedAllocations.firstWhere((a) => a.patient.id == patient.id && a.isActive());
     } catch (e) {
       assignment = null;
     }
 
     if (assignment != null) {
       assignment.checkout();
-      print(
-        'Freed bed ${assignment.bed.bedNumber} in Room ${assignment.bed.room.roomNumber}.',
-      );
+      print('Freed bed ${assignment.bed.bedNumber} in Room ${assignment.bed.room.roomNumber}.');
     } else {
       print('No active bed assignment found for ${patient.fullName}.');
     }
