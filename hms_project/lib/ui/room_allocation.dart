@@ -6,31 +6,13 @@ import '../domian/patient.dart';
 import '../data/mockup_data.dart';
 
 class RoomAllocation {
-  HMS hms = HMS(
-    hospitalName: "CADT",
-    location: "Prek Leab",
-    contact: "012345678",
-  );
+  HMS hms = HMS(hospitalName: "CADT", location: "Prek Leab", contact: "012345678");
 
   void startRoomAllocation() {
     initializeMockData(hms);
     bool running = true;
-
     while (running) {
-      print('\n====================================');
-      print('  Welcome to Hospital Room Manager');
-      print('====================================');
-      print('1. Show All Patients');
-      print('2. Register Patient');
-      print('3. Room Allocation');
-      print('   1. View Occupied Rooms');
-      print('   2. View Available Rooms');
-      print('   3. Assign Room to Patient');
-      print('   4. Change Room');
-      print('4. Patient Checkout');
-      print('5. Search Patient by Contact');
-      print('6. Exit');
-      print('------------------------------------');
+      showMenu();
       stdout.write('Please select an option: ');
       String? choice = stdin.readLineSync();
 
@@ -54,15 +36,9 @@ class RoomAllocation {
           stdout.write('Enter Contact Number: ');
           String contact = stdin.readLineSync() ?? '';
 
-          hms.registerPatient(
-            firstName: firstName,
-            lastName: lastName,
-            genderInput: genderInput,
-            contact: contact,
-          );
+          hms.registerPatient(firstName: firstName, lastName: lastName, genderInput: genderInput, contact: contact);
           break;
         case '3':
-          print('\nRoom Allocation starting\n');
           roomAllocationMenu();
           break;
         case '4':
@@ -107,87 +83,116 @@ class RoomAllocation {
     }
   }
 
+  //separate the room allocation menu
   void roomAllocationMenu() {
-    print('\nRoom Allocation Menu');
-    print('1. View Occupied Rooms');
-    print('2. View Available Rooms');
-    print('3. Assign Room to Patient');
-    print('4. Change Room');
-    stdout.write('Select an option: ');
-    String? subChoice = stdin.readLineSync();
+    bool isSubMenu = true;
+    while (isSubMenu) {
+      print('======Room Allocation Menu======');
+      print('1. View Occupied Rooms');
+      print('2. View Available Rooms');
+      print('3. Assign Room to Patient');
+      print('4. Change Room');
+      print('5 Back to Menu');
+      stdout.write('Select an option: ');
+      String? subChoice = stdin.readLineSync();
 
-    switch (subChoice) {
-      case '1':
-        final occupied = hms.getOccupiedRooms();
-        if (occupied.isEmpty) {
-          print('No occupied rooms found.');
-        } else {
-          print('\n===== Occupied Rooms =====');
-          occupied.forEach((room, beds) {
-            print('\nRoom Number: ${room.roomNumber}');
-            print('Room Type: ${room.type}');
-            print('Occupied Beds:');
-            for (var bed in beds) {
-              print('  - Bed ${bed.bedNumber} [Status: ${bed.status}]');
-            }
-          });
-        }
-        break;
-      case '2':
-        final available = hms.getAvailableRooms();
-        if (available.isEmpty) {
-          print('No available rooms found.');
-        } else {
-          print('\n===== Available Rooms =====');
-          available.forEach((room, beds) {
-            print('\nRoom Number: ${room.roomNumber}');
-            print('Room Type: ${room.type}');
-            print('Available Beds:');
-            for (var bed in beds) {
-              print('  - Bed ${bed.bedNumber} [Status: ${bed.status}]');
-            }
-          });
-        }
-        break;
-      case '3':
-        print('\nAssign Room for Patient');
-        stdout.write('Enter patient contact: ');
-        String contact = stdin.readLineSync() ?? '';
-        final patient = hms.searchPatientByContact(contact);
-
-        if (patient == null) {
-          print('Patient not found.');
-          return;
-        }
-        assignBedFlow(patient);
-        break;
-      case '4':
-        print('\nChange Room for Patient');
-        stdout.write('Enter patient contact: ');
-        String contact = stdin.readLineSync() ?? '';
-        final patient = hms.searchPatientByContact(contact);
-
-        if (patient == null) {
-          print('Patient not found.');
-          return;
-        }
-
-        hms.checkoutPatient(patient); // Frees current bed if assigned
-
-        stdout.write('Assign new bed to this patient? (yes/no): ');
-        String confirm = stdin.readLineSync() ?? '';
-        if (confirm.toLowerCase() != 'yes') {
-          print('Room change cancelled.');
-          return;
-        }
-
-        assignBedFlow(patient);
-        break;
-      default:
-        print('Invalid room allocation option.');
+      switch (subChoice) {
+        case '1':
+          showOccupiedRooms();
+          break;
+        case '2':
+          showAvaliableRoom();
+          break;
+        case '3':
+          assignPatient();
+          break;
+        case '4':
+          changeRoom();
+          break;
+        case '5':
+          isSubMenu = false;
+          break;
+        default:
+          print('Invalid room allocation option.');
+      }
     }
   }
 
+  //separate funtion to show all occupied room
+  void showOccupiedRooms() {
+    final occupied = hms.getOccupiedRooms();
+    if (occupied.isEmpty) {
+      print('No occupied rooms found.');
+    } else {
+      print('\n===== Occupied Rooms =====');
+      occupied.forEach((room, beds) {
+        print('\nRoom Number: ${room.roomNumber}');
+        print('Room Type: ${room.type.name}');
+        print('Occupied Beds:');
+        for (var bed in beds) {
+          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]');
+        }
+      });
+    }
+  }
+
+  //funtion to assign bed to patient
+  void assignPatient() {
+    print('\nAssign Room for Patient');
+    stdout.write('Enter patient contact: ');
+    String contact = stdin.readLineSync() ?? '';
+    final patient = hms.searchPatientByContact(contact);
+
+    if (patient == null) {
+      print('Patient not found.');
+      return;
+    }
+    assignBedFlow(patient);
+  }
+
+  //change room for patient
+  void changeRoom() {
+    print('\nChange Room for Patient');
+    stdout.write('Enter patient contact: ');
+    String contact = stdin.readLineSync() ?? '';
+    final patient = hms.searchPatientByContact(contact);
+
+    if (patient == null) {
+      print('Patient not found.');
+      return;
+    }
+
+    hms.checkoutPatient(patient); // Frees current bed if assigned
+
+    stdout.write('Assign new bed to this patient? (yes/no): ');
+    String confirm = stdin.readLineSync() ?? '';
+    if (confirm.toLowerCase() != 'yes') {
+      print('Room change cancelled.');
+      return;
+    }
+
+    assignBedFlow(patient);
+  }
+
+  //separate funtion to show all avaliable room
+  void showAvaliableRoom() {
+    final available = hms.getAvailableRooms();
+    if (available.isEmpty) {
+      print('No available rooms found.');
+    } else {
+      print('\n===== Available Rooms =====');
+      available.forEach((room, beds) {
+        print('\nRoom Number: ${room.roomNumber}');
+        print('Room Type: ${room.type.name}');
+        print('Available Beds:');
+        for (var bed in beds) {
+          print('  - Bed ${bed.bedNumber} [Status: ${bed.status.name}]');
+        }
+      });
+    }
+  }
+
+  //funtion to handle assign bed flow
   void assignBedFlow(Patient patient) {
     print('Select Room Type:');
     for (var i = 0; i < RoomType.values.length; i++) {
@@ -211,9 +216,9 @@ class RoomAllocation {
     final roomList = available.keys.toList();
     for (var i = 0; i < roomList.length; i++) {
       final room = roomList[i];
-      print('${i + 1}. Room ${room.roomNumber} (${room.type})');
+      print('${i + 1}. Room ${room.roomNumber} (${room.type.name})');
       for (var bed in available[room]!) {
-        print('   - Bed ${bed.bedNumber} [${bed.status}]');
+        print('   - Bed ${bed.bedNumber} [${bed.status.name}]');
       }
     }
 
@@ -241,4 +246,18 @@ class RoomAllocation {
     final selectedBed = bedsInRoom[bedIndex - 1];
     hms.assignRoomToPatient(patient, selectedBed);
   }
+}
+
+//function to display the main menu
+void showMenu() {
+  print('\n====================================');
+  print('  Welcome to Hospital Room Manager');
+  print('====================================');
+  print('1. Show All Patients');
+  print('2. Register Patient');
+  print('3. Room Allocation');
+  print('4. Patient Checkout');
+  print('5. Search Patient by Contact');
+  print('6. Exit');
+  print('------------------------------------');
 }

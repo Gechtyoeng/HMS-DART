@@ -19,7 +19,7 @@ class Bed {
   String toString() {
     return '''
     Bed number: $bedNumber
-    Current status: $status
+    Current status: ${status.name}
   ''';
   }
 
@@ -90,7 +90,7 @@ class Room {
   void roomDetail() {
     print('-----Room detail-----');
     print('Room number: $roomNumber');
-    print('Room type: $type');
+    print('Room type: ${type.name}');
     print('Room capacity: $capacity');
     print('----- Total bed -----');
     for (var bed in beds) {
