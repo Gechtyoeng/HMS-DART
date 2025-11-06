@@ -1,8 +1,8 @@
-import 'dart:developer';
+//import 'dart:developer';
 import 'dart:io';
 import 'package:hms_project/domian/patient.dart';
 import '../services/hms_service.dart';
-import '../domian/hms.dart';
+//import '../domian/hms.dart';
 import '../data/hms_repository.dart';
 import '../domian/room.dart';
 // import '../data/mockup_data.dart';
@@ -280,7 +280,7 @@ class RoomAllocationUI {
     }
 
     final selectedBed = bedsInRoom[bedIndex - 1];
-    service.assignBedToPatient(patient, selectedBed);
+    print(service.assignBedToPatient(patient, selectedBed));
   }
 }
 
