@@ -1,21 +1,23 @@
+import 'dart:developer';
 import 'dart:io';
+import 'package:hms_project/domian/patient.dart';
+import '../services/hms_service.dart';
 import '../domian/hms.dart';
 import '../data/hms_repository.dart';
 import '../domian/room.dart';
-import '../domian/patient.dart';
 // import '../data/mockup_data.dart';
 
-class RoomAllocation {
+class RoomAllocationUI {
   // HMS hms = HMS(
   //   hospitalName: "CADT",
   //   location: "Prek Leab",
   //   contact: "012345678",
   // );
-  HMS hms;
+  final hmsService service;
 
-  RoomAllocation(this.hms);
+  RoomAllocationUI(this.service);
 
-  void startRoomAllocation() {
+  void start() {
     // initializeMockData(hms);
     bool running = true;
     while (running) {
@@ -25,68 +27,25 @@ class RoomAllocation {
 
       switch (choice) {
         case '1':
-          print('\nAll patients are : \n');
-          hms.showAllPatients();
+          showAllPatientsUI();
           break;
         case '2':
-          print('\nRegister New Patient\n');
-
-          stdout.write('Enter First Name: ');
-          String firstName = stdin.readLineSync() ?? '';
-
-          stdout.write('Enter Last Name: ');
-          String lastName = stdin.readLineSync() ?? '';
-
-          stdout.write('Enter Gender (male/female): ');
-          String genderInput = stdin.readLineSync() ?? '';
-
-          stdout.write('Enter Contact Number: ');
-          String contact = stdin.readLineSync() ?? '';
-
-          hms.registerPatient(firstName: firstName, lastName: lastName, genderInput: genderInput, contact: contact);
+          registerPatientUI();
           break;
         case '3':
           roomAllocationMenu();
           break;
         case '4':
-          print('\nAll assignment detail \n');
-          for (var ba in hms.bedAllocations) {
-            ba.assignmentDetail();
-          }
+          showBedAssignmentUI();
+          break;
         case '5':
-          print('\nPatient Checkout\n');
-          stdout.write('Enter patient contact: ');
-          String contact = stdin.readLineSync() ?? '';
-          final patient = hms.searchPatientByContact(contact);
-
-          if (patient == null) {
-            print('Patient not found.');
-            return;
-          }
-
-          hms.checkoutPatient(patient);
+          checkOutPatientUI();
           break;
         case '6':
-          print('\nSearch Patient by Contact\n');
-          stdout.write('Enter contact number: ');
-          String contact = stdin.readLineSync() ?? '';
-
-          if (contact.isEmpty) {
-            print('Contact number cannot be empty.');
-            break;
-          }
-
-          final patient = hms.searchPatientByContact(contact);
-
-          if (patient == null) {
-            print('No patient found with contact: $contact');
-          } else {
-            print('Patient found:');
-            print(patient);
-          }
+          searchPatientUI();
           break;
         case '7':
-          saveToJson(hms);
+          saveToJson(service.hms);
           running = false;
           print('\nThank you for using Hospital Room Manager. Stay healthy!');
           break;
@@ -131,13 +90,82 @@ class RoomAllocation {
     }
   }
 
+  //display all the patients
+  void showAllPatientsUI() {
+    final patients = service.getAllPatients();
+    if (patients.isEmpty) {
+      print('No patients found.');
+    } else {
+      print('\n--- All Patients ---\n');
+      for (var p in patients) {
+        print(p);
+      }
+    }
+  }
+
+  //display all bed assignment
+  void showBedAssignmentUI() {
+    print('\n--- All assignment detail ---\n');
+    final bedassignments = service.getAllBedAssignments();
+    if (bedassignments.isEmpty) {
+      print('No bed assignment found.');
+    } else {
+      for (var ba in bedassignments) {
+        ba.assignmentDetail();
+      }
+    }
+  }
+
+  //register patient ui
+  void registerPatientUI() {
+    print('\n--- Register New Patient ---\n');
+    stdout.write('Enter First Name: ');
+    String firstName = stdin.readLineSync() ?? '';
+
+    stdout.write('Enter Last Name: ');
+    String lastName = stdin.readLineSync() ?? '';
+
+    stdout.write('Enter Gender (male/female): ');
+    String genderInput = stdin.readLineSync() ?? '';
+
+    stdout.write('Enter Contact Number: ');
+    String contact = stdin.readLineSync() ?? '';
+
+    final status = service.handleRegister(firstName: firstName, lastName: lastName, genderInput: genderInput, contact: contact);
+    print(status);
+  }
+
+  //check out patient ui
+  void checkOutPatientUI() {
+    print('\n--- Patient Checkout ---\n');
+    stdout.write('Enter patient contact: ');
+    String contact = stdin.readLineSync() ?? '';
+
+    final status = service.checkoutPatient(contact);
+    print(status);
+  }
+
+  //search patient ui
+  void searchPatientUI() {
+    print('\n--- Search patient by contact ---\n');
+    stdout.write('Enter contact number: ');
+    String contact = stdin.readLineSync() ?? '';
+
+    final patientFound = service.searchPatient(contact);
+    if (patientFound != null) {
+      print(patientFound);
+    } else {
+      print('Patient with contact: $contact not found.');
+    }
+  }
+
   //separate funtion to show all occupied room
   void showOccupiedRooms() {
-    final occupied = hms.getOccupiedRooms();
+    final occupied = service.getOccupiedRooms();
     if (occupied.isEmpty) {
       print('No occupied rooms found.');
     } else {
-      print('\n===== Occupied Rooms =====');
+      print('\n--- Occupied Rooms ---');
       occupied.forEach((room, beds) {
         print('\nRoom Number: ${room.roomNumber}');
         print('Room Type: ${room.type.name}');
@@ -151,10 +179,10 @@ class RoomAllocation {
 
   //funtion to assign bed to patient
   void assignPatient() {
-    print('\nAssign Room for Patient');
+    print('\n--- Assign Room for Patient ---');
     stdout.write('Enter patient contact: ');
     String contact = stdin.readLineSync() ?? '';
-    final patient = hms.searchPatientByContact(contact);
+    final patient = service.searchPatient(contact);
 
     if (patient == null) {
       print('Patient not found.');
@@ -165,35 +193,30 @@ class RoomAllocation {
 
   //change room for patient
   void changeRoom() {
-    print('\nChange Room for Patient');
+    print('\n--- Change Room for Patient ---\n');
     stdout.write('Enter patient contact: ');
     String contact = stdin.readLineSync() ?? '';
-    final patient = hms.searchPatientByContact(contact);
 
-    if (patient == null) {
-      print('Patient not found.');
-      return;
-    }
-
-    hms.checkoutPatient(patient); // Frees current bed if assigned
+    final status = service.checkoutPatient(contact);
+    print(status);
 
     stdout.write('Assign new bed to this patient? (yes/no): ');
     String confirm = stdin.readLineSync() ?? '';
     if (confirm.toLowerCase() != 'yes') {
-      print('Room change cancelled.');
+      print('Room change cancelled. patient checkout.');
       return;
     }
-
-    assignBedFlow(patient);
+    final patient = service.searchPatient(contact);
+    assignBedFlow(patient!);
   }
 
   //separate funtion to show all avaliable room
   void showAvaliableRoom() {
-    final available = hms.getAvailableRooms();
+    final available = service.getAvailableRooms();
     if (available.isEmpty) {
       print('No available rooms found.');
     } else {
-      print('\n===== Available Rooms =====');
+      print('\n--- Available Rooms ---');
       available.forEach((room, beds) {
         print('\nRoom Number: ${room.roomNumber}');
         print('Room Type: ${room.type.name}');
@@ -219,7 +242,7 @@ class RoomAllocation {
     }
     RoomType selectedType = RoomType.values[index - 1];
 
-    final available = hms.getAvailableBedsByRoomType(selectedType);
+    final available = service.getAvailableRoomsByType(selectedType);
     if (available.isEmpty) {
       print('No available beds in $selectedType rooms.');
       return;
@@ -257,7 +280,7 @@ class RoomAllocation {
     }
 
     final selectedBed = bedsInRoom[bedIndex - 1];
-    hms.assignRoomToPatient(patient, selectedBed);
+    service.assignBedToPatient(patient, selectedBed);
   }
 }
 

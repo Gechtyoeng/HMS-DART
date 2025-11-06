@@ -13,54 +13,22 @@ class HMS {
 
   HMS({required this.hospitalName, required this.location, required this.contact});
 
-  // Function that display all patients
-  void showAllPatients() {
-    if (patients.isEmpty) {
-      print("No patient founded.");
-    } else {
-      for (var patient in patients) {
-        print(patient);
-      }
+  // Function to get all patients
+  List<Patient> getAllPatients() => patients;
+
+  //function to get all bed assignment
+  List<Bedassignment> getAllBedAssignments() => bedAllocations;
+
+  //register new patient
+  void registerPatient(Patient patient) {
+    //check if patient already existed
+    if (patients.any((p) => p.contact == patient.contact)) {
+      throw Exception('Patient with $contact already registered.');
     }
+    patients.add(patient);
   }
 
-  // Function register new patient
-  void registerPatient({required String firstName, required String lastName, required String genderInput, required String contact}) {
-    if (firstName.isEmpty || lastName.isEmpty || genderInput.isEmpty || contact.isEmpty) {
-      print('Invalid input. All fields are required.');
-      return;
-    }
-    //clean the contact
-    contact = contact.trim().replaceAll(' ', '');
-    // Contact validation
-    if (!RegExp(r'^[0-9]+$').hasMatch(contact)) {
-      print('Invalid contact number. Please enter digits only.');
-      return;
-    }
-
-    //check if contact existed
-    bool contactExisted = patients.any((p) => p.contact == contact);
-    if (contactExisted) {
-      print('Contact number: $contact is already registered.');
-      return;
-    }
-
-    Gender? gender;
-    if (genderInput.toLowerCase() == 'male') {
-      gender = Gender.male;
-    } else if (genderInput.toLowerCase() == 'female') {
-      gender = Gender.female;
-    } else {
-      print('Invalid gender. Please enter "male" or "female".');
-      return;
-    }
-
-    final newPatient = Patient(firstName: firstName, lastName: lastName, gender: gender, contact: contact);
-
-    patients.add(newPatient);
-    print("Patient ${newPatient.fullName} registered successfully.");
-  }
-
+  //search patient
   Patient? searchPatientByContact(String contact) {
     contact = contact.trim().replaceAll(' ', ''); //remove space before compare
     try {
@@ -97,40 +65,28 @@ class HMS {
   // Function assign room to patient
   void assignRoomToPatient(Patient patient, Bed bed) {
     if (!bed.ifBedFree()) {
-      print('Bed ${bed.bedNumber} is already occupied.');
-      return;
+      throw Exception('Bed ${bed.bedNumber} in Room ${bed.room.roomNumber} is already occupied.');
     }
-    
-    //check if patient already assigned
-    for (var assignment in bedAllocations) {
-      if (assignment.patient == patient) {
-        print('Patient already have bed assignment.');
-        return;
-      }
+
+    // Check if patient already has an active bed assignment
+    final hasActiveAssignment = bedAllocations.any((assignment) => assignment.patient == patient && assignment.isActive());
+
+    if (hasActiveAssignment) {
+      throw Exception('Patient ${patient.fullName} already has a bed assigned.');
     }
 
     bed.assignBed();
     final assignment = Bedassignment(patient: patient, bed: bed);
     bedAllocations.add(assignment);
-
-    print('Assigned Bed ${bed.bedNumber} in Room ${bed.room.roomNumber} to ${patient.fullName}.');
   }
 
   //Function checkout for patient
   void checkoutPatient(Patient patient) {
-    Bedassignment? assignment;
+    final assignment = bedAllocations.firstWhere(
+      (a) => a.patient.id == patient.id && a.isActive(),
+      orElse: () => throw Exception('Bed assignment with patient: ${patient.fullName} not found.'),
+    );
 
-    try {
-      assignment = bedAllocations.firstWhere((a) => a.patient.id == patient.id && a.isActive());
-    } catch (e) {
-      assignment = null;
-    }
-
-    if (assignment != null) {
-      assignment.checkout();
-      print('Freed bed ${assignment.bed.bedNumber} in Room ${assignment.bed.room.roomNumber}.');
-    } else {
-      print('No active bed assignment found for ${patient.fullName}.');
-    }
+    assignment.checkout();
   }
 }
