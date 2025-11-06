@@ -23,7 +23,7 @@ class HMS {
   void registerPatient(Patient patient) {
     //check if patient already existed
     if (patients.any((p) => p.contact == patient.contact)) {
-      throw Exception('Patient with $contact already registered.');
+      throw Exception('Patient with ${patient.contact} already registered.');
     }
     patients.add(patient);
   }
